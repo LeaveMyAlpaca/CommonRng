@@ -1,5 +1,4 @@
 import { invoke } from "@tauri-apps/api/core";
-import { info } from "@tauri-apps/plugin-log";
 import { open } from "@tauri-apps/plugin-dialog";
 import { save } from "@tauri-apps/plugin-dialog";
 
@@ -36,7 +35,7 @@ async function SaveSelectionDialog() {
     multiple: false,
     defaultPath: "/Save files/",
   })) as String;
-  thingsToRandomlyGet = await invoke("ParseSave", { path: value });
+  thingsToRandomlyGet = await invoke("parse_save", { path: value });
   displayConfig();
 }
 async function CreateSaveFileDialog() {
@@ -49,10 +48,10 @@ async function CreateSaveFileDialog() {
     ],
     defaultPath: "/Save files/",
   });
-  await invoke("SaveFile", { settings: thingsToRandomlyGet, path: path });
+  await invoke("save_file", { settings: thingsToRandomlyGet, path: path });
 }
 async function onDiceClick() {
-  var random: randomThing = await invoke("SelectRandom", {
+  var random: randomThing = await invoke("select_random", {
     vecToSelectFrom: thingsToRandomlyGet,
   });
   if (removeItemAfterSelection && thingsToRandomlyGet.length != 1) {
@@ -75,8 +74,8 @@ async function onDiceClick() {
   randomName.style.textDecorationColor = random.color as string;
   displayConfig();
 }
-async function GetRandomThings() {
-  thingsToRandomlyGet = await invoke("GetRandomThings", {});
+async function GetDefault() {
+  thingsToRandomlyGet = await invoke("get_default", {});
 }
 function addNewRandomThing() {
   const newRandomThing = new randomThing();
@@ -173,7 +172,7 @@ class randomThing {
 var thingsToRandomlyGet: randomThing[] = [];
 var removeItemAfterSelection = false;
 
-await GetRandomThings();
+await GetDefault();
 
 window.addEventListener("DOMContentLoaded", () => {});
 
