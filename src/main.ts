@@ -2,11 +2,8 @@ import { invoke } from "@tauri-apps/api/core";
 import { info } from "@tauri-apps/plugin-log";
 import { open } from "@tauri-apps/plugin-dialog";
 import { save } from "@tauri-apps/plugin-dialog";
-// when using `"withGlobalTauri": true`, you may use
-// const { open } = window.__TAURI__.dialog;
 
 async function IconSelectionDialog(randomItemIndex: number) {
-  info("OpenFileSelectionDialog");
   var value = await open({
     title: "Select icon source inside images folder",
     multiple: false,
@@ -14,7 +11,6 @@ async function IconSelectionDialog(randomItemIndex: number) {
   });
   var splittedPath = new URL(value as string).toString().split("/");
 
-  info(`"splittedPath.length ${splittedPath.length}"`);
   var foundImagesFolder = false;
   var filePathFromImagesFolder = "";
   for (let index = 0; index < splittedPath.length; index++) {
@@ -27,14 +23,12 @@ async function IconSelectionDialog(randomItemIndex: number) {
 
     filePathFromImagesFolder += `/${element}`;
   }
-  info(`filePathFromImagesFolder ${filePathFromImagesFolder}`);
   if (filePathFromImagesFolder == "") return;
 
   var actualRelativePath = `./Images${filePathFromImagesFolder}`;
-  info(`actualRelativePath${actualRelativePath}`);
   thingsToRandomlyGet[randomItemIndex].localizationOfIcon = actualRelativePath;
-  /* var fileName = ;
-   */ displayConfig();
+
+  displayConfig();
 }
 async function SaveSelectionDialog() {
   var value = (await open({
@@ -57,27 +51,6 @@ async function CreateSaveFileDialog() {
   });
   await invoke("SaveFile", { settings: thingsToRandomlyGet, path: path });
 }
-
-var thingsToRandomlyGet: randomThing[] = [];
-var removeItemAfterSelection = false;
-async function GetRandomThings() {
-  info("TEst");
-  thingsToRandomlyGet = await invoke("GetRandomThings", {});
-  info(`"thingsToRandomlyGet.length ${thingsToRandomlyGet.length}"`);
-} //
-await GetRandomThings();
-
-/* async function greet() {
-  if (greetMsgEl && greetInputEl) {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-
-    greetMsgEl.textContent = await invoke("greet", {
-      name: greetInputEl.value,
-      time: Date().toString(),
-    });
-  }
-} */
-//
 async function onDiceClick() {
   var random: randomThing = await invoke("SelectRandom", {
     vecToSelectFrom: thingsToRandomlyGet,
@@ -102,23 +75,9 @@ async function onDiceClick() {
   randomName.style.textDecorationColor = random.color as string;
   displayConfig();
 }
-
-window.addEventListener("DOMContentLoaded", () => {});
-
-var dice = document.getElementById("dice") as HTMLImageElement;
-dice.onclick = onDiceClick;
-
-var addSign = document.getElementById("addSign") as HTMLElement;
-addSign.onclick = addNewRandomThing;
-var saveButton = document.getElementById("save") as HTMLElement;
-saveButton.onclick = CreateSaveFileDialog;
-var loadButton = document.getElementById("load") as HTMLElement;
-loadButton.onclick = SaveSelectionDialog;
-var removeButton = document.getElementById("cb3-8") as HTMLInputElement;
-removeButton.onclick = () => {
-  removeItemAfterSelection = !removeItemAfterSelection;
-};
-
+async function GetRandomThings() {
+  thingsToRandomlyGet = await invoke("GetRandomThings", {});
+}
 function addNewRandomThing() {
   const newRandomThing = new randomThing();
   newRandomThing.color = "white";
@@ -127,9 +86,6 @@ function addNewRandomThing() {
   thingsToRandomlyGet.push(newRandomThing);
   displayConfig();
 }
-
-displayConfig();
-
 function displayConfig() {
   var randomLayout = document.getElementById("randomLayout") as HTMLElement;
   // clear old childs
@@ -203,16 +159,36 @@ function displayConfig() {
   function colorChanged(event: Event, randomThing: randomThing) {
     var input = event.target as HTMLInputElement;
     randomThing.color = input.value;
-    info(`colorChanged ${input.value}`);
 
     // Update colors of text
     displayConfig();
   }
 }
-
-//
 class randomThing {
   public name: string = "";
   public localizationOfIcon: string = "";
   public color: string = "#ffffff";
 }
+
+var thingsToRandomlyGet: randomThing[] = [];
+var removeItemAfterSelection = false;
+
+await GetRandomThings();
+
+window.addEventListener("DOMContentLoaded", () => {});
+
+var dice = document.getElementById("dice") as HTMLImageElement;
+dice.onclick = onDiceClick;
+
+var addSign = document.getElementById("addSign") as HTMLElement;
+addSign.onclick = addNewRandomThing;
+var saveButton = document.getElementById("save") as HTMLElement;
+saveButton.onclick = CreateSaveFileDialog;
+var loadButton = document.getElementById("load") as HTMLElement;
+loadButton.onclick = SaveSelectionDialog;
+var removeButton = document.getElementById("cb3-8") as HTMLInputElement;
+removeButton.onclick = () => {
+  removeItemAfterSelection = !removeItemAfterSelection;
+};
+
+displayConfig();
