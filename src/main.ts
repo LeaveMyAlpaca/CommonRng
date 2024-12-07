@@ -59,6 +59,7 @@ async function CreateSaveFileDialog() {
 }
 
 var thingsToRandomlyGet: randomThing[] = [];
+var removeItemAfterSelection = false;
 async function GetRandomThings() {
   info("TEst");
   thingsToRandomlyGet = await invoke("GetRandomThings", {});
@@ -78,13 +79,20 @@ await GetRandomThings();
 } */
 //
 async function onDiceClick() {
-  info("onDiceClick");
-
-  await invoke("Test");
   var random: randomThing = await invoke("SelectRandom", {
     vecToSelectFrom: thingsToRandomlyGet,
   });
-  info("selected random");
+  if (removeItemAfterSelection && thingsToRandomlyGet.length != 1) {
+    var index = thingsToRandomlyGet.findIndex(
+      (val) =>
+        val.color == random.color &&
+        val.name == random.name &&
+        val.localizationOfIcon == random.localizationOfIcon
+    );
+    if (index > -1) {
+      thingsToRandomlyGet.splice(index, 1);
+    }
+  }
 
   var randomImage = document.getElementById("RandomImage") as HTMLImageElement;
   randomImage.src = random.localizationOfIcon;
@@ -92,6 +100,7 @@ async function onDiceClick() {
   var randomName = document.getElementById("RandomName") as HTMLElement;
   randomName.textContent = random.name;
   randomName.style.textDecorationColor = random.color as string;
+  displayConfig();
 }
 
 window.addEventListener("DOMContentLoaded", () => {});
@@ -105,6 +114,10 @@ var saveButton = document.getElementById("save") as HTMLElement;
 saveButton.onclick = CreateSaveFileDialog;
 var loadButton = document.getElementById("load") as HTMLElement;
 loadButton.onclick = SaveSelectionDialog;
+var removeButton = document.getElementById("cb3-8") as HTMLInputElement;
+removeButton.onclick = () => {
+  removeItemAfterSelection = !removeItemAfterSelection;
+};
 
 function addNewRandomThing() {
   const newRandomThing = new randomThing();
