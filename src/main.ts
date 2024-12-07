@@ -42,7 +42,8 @@ async function SaveSelectionDialog() {
     multiple: false,
     defaultPath: "/Save files/",
   })) as String;
-  await invoke("SaveFile", { settings: thingsToRandomlyGet, path: path });
+  thingsToRandomlyGet = await invoke("ParseSave", { path: value });
+  displayConfig();
 }
 async function CreateSaveFileDialog() {
   var path = await save({

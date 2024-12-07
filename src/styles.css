@@ -44,7 +44,7 @@
 .header {
   position: relative;
   align-self: center;
-  left: 50px;
+  left: 100px;
 }
 .Random {
   height: 100;
@@ -55,7 +55,7 @@
   display: flex;
   position: relative;
   align-self: center;
-  left: 50px;
+  left: 100px;
   border-radius: 10px;
   padding: 20px;
 }

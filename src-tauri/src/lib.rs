@@ -3,7 +3,7 @@ use std::thread::Thread;
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use rand::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::prelude::*;
 use tauri::window::Color;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -72,23 +72,54 @@ fn Test() {
     println!("Test.RS");
 }
 
-const SETTING_SAVE_SIZE: u8 = 3;
 fn to_save(settings: Vec<RandomThing>) -> String {
     let mut output: String = String::new();
 
     for settingIndex in 0..settings.len() {
         let setting: &RandomThing = &settings[settingIndex];
         output += &format!(
-            "${}\n{}\n{}\n",
+            "{}\n{}\n{}\n",
             setting.name, setting.localization_of_icon, setting.color
         );
     }
 
     return output;
 }
+const SETTING_SAVE_SIZE: usize = 3;
+
 #[tauri::command]
 fn ParseSave(path: String) -> Vec<RandomThing> {
-    return Vec::new();
+    println!("ParseSave");
+
+    let contents: String =
+        fs::read_to_string(path).expect("Should have been able to read the file");
+    println!("ParseSave contents {contents}");
+    let saveClassesCount = (contents.split("\n").count() - 1) / SETTING_SAVE_SIZE;
+    let splittedContents = contents.split("\n");
+
+    let mut returnVec: Vec<RandomThing> = Vec::new();
+    let mut currentIndex = 0;
+    let mut name: &str = "";
+    let mut localization_of_icon: &str = "";
+    for str in splittedContents {
+        currentIndex += 1;
+
+        if (currentIndex == 1) {
+            name = str;
+        } else if (currentIndex == 2) {
+            localization_of_icon = str;
+        } else {
+            returnVec.push(RandomThing {
+                name: name.to_string(),
+                localization_of_icon: localization_of_icon.to_string(),
+                color: str.to_string(),
+            });
+            currentIndex = 0;
+        }
+        println!("ParseSave str {str}");
+    }
+
+    return returnVec;
 }
 
 #[derive(Clone, Serialize, Deserialize)]

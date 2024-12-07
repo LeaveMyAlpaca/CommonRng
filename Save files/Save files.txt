@@ -1,12 +1,27 @@
-$Test 0 1
+GOOD NAME
 /Images/vite.svg
-#00b70b
-$rand
+darkBlue
+RANDOM NAME
 /Images/Test/vite.svg
 #2f4230
-$Test 1
+TEST_Name
 /Images/dice.svg
-#e42038
-$Hello
+lightGreen
+OOOOO NAME :
 /Images/add.svg
-#ffffff
+tomato
+new
+../Images/vite.svg
+white
+new
+../Images/vite.svg
+white
+new
+../Images/vite.svg
+white
+new
+../Images/vite.svg
+white
+new
+../Images/vite.svg
+white
