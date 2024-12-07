@@ -1,0 +1,12 @@
+$Test 0 1
+/Images/vite.svg
+#00b70b
+$rand
+/Images/Test/vite.svg
+#2f4230
+$Test 1
+/Images/dice.svg
+#e42038
+$Hello
+/Images/add.svg
+#ffffff
