@@ -71,7 +71,7 @@ async function onDiceClick() {
 
   var randomName = document.getElementById("RandomName") as HTMLElement;
   randomName.textContent = random.name;
-  randomName.style.textDecorationColor = random.color as string;
+  randomName.style.color = random.color;
   displayConfig();
 }
 async function GetDefault() {
